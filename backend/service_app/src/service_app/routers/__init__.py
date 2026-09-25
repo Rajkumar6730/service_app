@@ -1,0 +1,9 @@
+from .auth import router as auth_router
+from .service_requests import router as service_requests_router
+from .manager import router as manager_router
+from .technician import router as technician_router
+from .assignments import router as assignments_router
+from .feedback import router as feedback_router
+from .notifications import router as notifications_router
+from .dashboard import router as dashboard_router
+from .attachments import router as attachments_router

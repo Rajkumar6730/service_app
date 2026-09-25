@@ -1,0 +1,34 @@
+[project]
+name = "service-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "rajkumar", email = "rajkumargogulakonda@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "bcrypt>=5.0.0",
+    "dnspython==2.8.0",
+    "email-validator==2.3.0",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "mysql-connector-python>=26.7.0",
+    "passlib>=1.7.4",
+    "pydantic>=2.13.5",
+    "pydantic-settings==2.15.0",
+    "pytest>=9.1.1",
+    "python-dotenv==1.2.3",
+    "python-jose[cryptography]>=3.5.0",
+    "python-multipart>=0.0.32",
+    "requests>=2.34.2",
+    "sqlalchemy>=2.0.54",
+    "uvicorn>=0.53.0",
+]
+
+[project.scripts]
+service-app = "service_app:main"
+
+[build-system]
+requires = ["uv_build>=0.12.16,<0.13.0"]
+build-backend = "uv_build"

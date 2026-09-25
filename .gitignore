@@ -1,0 +1,88 @@
+# ==========================================
+# Python
+# ==========================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Python cache/testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ==========================================
+# Environment / Secrets
+# ==========================================
+
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# FastAPI / Uvicorn
+# ==========================================
+
+*.log
+
+# ==========================================
+# SQLite / Local Database
+# ==========================================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# Uploaded files
+# ==========================================
+
+uploads/
+backend/uploads/
+backend/service_app/uploads/
+
+# ==========================================
+# React / Vite
+# ==========================================
+
+node_modules/
+dist/
+.vite/
+
+# Vite local environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# ==========================================
+# Testing / Temporary files
+# ==========================================
+
+*.tmp
+*.temp
+
+# ==========================================
+# IDE / Editor
+# ==========================================
+
+.vscode/
+.idea/
+
+# VS Code local settings
+*.code-workspace
+
+# ==========================================
+# Operating System
+# ==========================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
