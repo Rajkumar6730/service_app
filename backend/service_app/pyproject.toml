@@ -11,7 +11,7 @@ dependencies = [
     "bcrypt>=5.0.0",
     "dnspython==2.8.0",
     "email-validator==2.3.0",
-    "fastapi>=0.141.1",
+    "fastapi[standard]>=0.141.1",
     "httpx>=0.28.1",
     "mysql-connector-python>=26.7.0",
     "passlib>=1.7.4",
@@ -33,3 +33,6 @@ service-app = "service_app:main"
 [build-system]
 requires = ["uv_build>=0.12.16,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.fastapi]
+entrypoint = "service_app.main:app"
