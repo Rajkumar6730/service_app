@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_URL || 'https://service-request-9a97cf28.fastapicloud.dev',
   // Don't set global Content-Type here because we use both JSON (register) and Form (login)
 });
 
