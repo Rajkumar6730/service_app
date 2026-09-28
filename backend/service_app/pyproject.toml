@@ -13,11 +13,9 @@ dependencies = [
     "email-validator==2.3.0",
     "fastapi[standard]>=0.141.1",
     "httpx>=0.28.1",
-    "mysql-connector-python>=26.7.0",
     "passlib>=1.7.4",
     "pydantic>=2.13.5",
     "pydantic-settings==2.15.0",
-    "pymysql>=1.2.3",
     "pytest>=9.1.1",
     "python-dotenv==1.2.3",
     "python-jose[cryptography]>=3.5.0",
@@ -25,7 +23,7 @@ dependencies = [
     "requests>=2.34.2",
     "sqlalchemy>=2.0.54",
     "uvicorn>=0.53.0",
-    ]
+]
 
 [project.scripts]
 service-app = "service_app:main"

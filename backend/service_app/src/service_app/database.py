@@ -31,12 +31,16 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./service_app.db")
 
-if not SQLALCHEMY_DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set")
+connect_args = {}
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args=connect_args
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
