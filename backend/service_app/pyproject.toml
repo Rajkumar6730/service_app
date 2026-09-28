@@ -25,8 +25,7 @@ dependencies = [
     "requests>=2.34.2",
     "sqlalchemy>=2.0.54",
     "uvicorn>=0.53.0",
-    "fastapi-cloud==1.20.2",
-]
+    ]
 
 [project.scripts]
 service-app = "service_app:main"
