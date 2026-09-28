@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+*.db
+uploads/
+.pytest_cache/
+.fastapicloud/
+
+dist/
