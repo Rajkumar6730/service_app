@@ -36,7 +36,7 @@ coverage.xml
 # ==========================================
 # SQLite / Local Database
 # ==========================================
-
+# Databases
 *.db
 *.sqlite
 *.sqlite3
