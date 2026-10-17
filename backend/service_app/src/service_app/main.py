@@ -42,7 +42,7 @@ def test_db_connection(db: Session = Depends(get_db)):
     try:
         result = db.execute(text("SELECT 1")).fetchone()
         if result and result[0] == 1:
-            return {"status": "success", "message": "Successfully connected to MySQL!"}
+            return {"status": "success", "message": "Successfully connected to the database!"}
         else:
             raise HTTPException(status_code=500, detail="Unexpected result.")
     except Exception as e:
