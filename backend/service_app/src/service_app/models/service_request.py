@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from ..core.database import Base
@@ -16,6 +16,9 @@ class ServiceRequest(Base):
     address = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    service_unavailable = Column(Boolean, default=False, nullable=False)
+    unavailability_message = Column(String(255), nullable=True)
+    unavailability_updated_at = Column(DateTime, nullable=True)
 
     customer = relationship("User", back_populates="requests", foreign_keys=[customer_id])
     category = relationship("ServiceCategory", back_populates="requests")

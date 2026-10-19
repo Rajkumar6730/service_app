@@ -16,3 +16,6 @@ class ResetPasswordRequest(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
+    reset_token: str | None = None
+    email: str | None = None
+

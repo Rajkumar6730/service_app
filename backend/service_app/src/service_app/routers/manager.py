@@ -62,6 +62,14 @@ def update_priority(request_id: int, priority_data: PriorityUpdate, db: Session 
         raise HTTPException(status_code=404, detail="Request not found")
     return req
 
+@router.post("/requests/{request_id}/mark-unavailable", response_model=ServiceRequestResponse)
+def mark_service_unavailable(request_id: int, db: Session = Depends(get_db)):
+    return manager_service.mark_service_unavailable(db, request_id)
+
+@router.post("/requests/{request_id}/mark-available", response_model=ServiceRequestResponse)
+def mark_service_available(request_id: int, db: Session = Depends(get_db)):
+    return manager_service.mark_service_available(db, request_id)
+
 from fastapi import Form, File, UploadFile
 
 @router.put("/requests/{request_id}", response_model=ServiceRequestResponse)

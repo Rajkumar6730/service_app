@@ -10,7 +10,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container nav-container">
         <Link to="/" className="nav-logo">
-          <Wrench size={24} />
+          <img src="/services.png" alt="ServiceHub Logo" style={{ height: '24px', width: 'auto' }} />
           <span>ServiceHub</span>
         </Link>
         <div className="nav-links">

@@ -74,6 +74,9 @@ class ServiceRequest(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    service_unavailable = Column(Boolean, default=False, nullable=False)
+    unavailability_message = Column(String(255), nullable=True)
+    unavailability_updated_at = Column(DateTime, nullable=True)
 
     customer = relationship("User", foreign_keys=[customer_id], back_populates="customer_requests")
     technician = relationship("User", foreign_keys=[technician_id], back_populates="technician_requests")

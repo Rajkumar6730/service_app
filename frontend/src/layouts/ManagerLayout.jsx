@@ -22,7 +22,7 @@ const ManagerLayout = () => {
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <Link to="/" className="nav-logo" style={{ fontSize: '1.25rem' }}>
-            <ShieldCheck size={20} />
+            <img src="/services.png" alt="ServiceHub Logo" style={{ height: '22px', width: 'auto' }} />
             <span>Manager Portal</span>
           </Link>
         </div>

@@ -12,5 +12,7 @@ class Notification(Base):
     message = Column(Text, nullable=False)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    request_id = Column(Integer, ForeignKey('service_requests.id'), nullable=True)
+    notification_type = Column(String(50), default="GENERAL", nullable=True)
 
     user = relationship("User", back_populates="notifications")

@@ -38,7 +38,7 @@ def test_technician_authorization(client, auth_tokens):
     res2 = client.get("/technician/requests", headers=auth_tokens["customer"])
     assert res2.status_code == 403
 
-def test_technician_assignment_and_transitions(client, auth_tokens):
+def test_technician_assignment_and_transitions(client, auth_tokens, db_session):
     # 1. Customer creates request
     req = client.post(
         "/service-requests",
@@ -52,6 +52,13 @@ def test_technician_assignment_and_transitions(client, auth_tokens):
         }
     )
     req_id = req.json()["id"]
+
+    # Age request past 30 minutes to satisfy assignment constraint
+    from service_app.models.service_request import ServiceRequest
+    from datetime import datetime, timedelta
+    db_req = db_session.query(ServiceRequest).filter(ServiceRequest.id == req_id).first()
+    db_req.created_at = datetime.utcnow() - timedelta(minutes=35)
+    db_session.commit()
 
     # 2. Manager assigns technician
     assign_res = client.post(
@@ -94,3 +101,57 @@ def test_technician_assignment_and_transitions(client, auth_tokens):
         json={"status": "COMPLETED", "remarks": "Done"}
     )
     assert res_complete.status_code == 200
+
+def test_technician_assignment_notification(client, auth_tokens, db_session):
+    from service_app.models.service_request import ServiceRequest
+    from datetime import datetime, timedelta
+
+    # 1. Customer creates request
+    req = client.post(
+        "/service-requests",
+        headers=auth_tokens["customer"],
+        data={
+            "category_id": 1,
+            "title": "Water Leakage",
+            "description": "Pipe burst in bathroom",
+            "priority": "HIGH",
+            "address": "789 Main St"
+        }
+    )
+    req_id = req.json()["id"]
+
+    # Age request past 30 minutes to satisfy assignment constraint
+    db_req = db_session.query(ServiceRequest).filter(ServiceRequest.id == req_id).first()
+    db_req.created_at = datetime.utcnow() - timedelta(minutes=35)
+    db_session.commit()
+
+    # 2. Manager assigns technician
+    assign_res = client.post(
+        "/assignments",
+        headers=auth_tokens["manager"],
+        json={"request_id": req_id, "technician_ids": [auth_tokens["tech_profile_id"]]}
+    )
+    assert assign_res.status_code in [200, 201]
+
+    # 3. Technician fetches notifications
+    notif_res = client.get("/notifications", headers=auth_tokens["technician"])
+    assert notif_res.status_code == 200
+    notifs = notif_res.json()
+
+    # Verify technician received the exact notification
+    assignment_notif = next((n for n in notifs if n.get("request_id") == req_id), None)
+    assert assignment_notif is not None
+    assert assignment_notif["message"] == "🔔 New task assigned! Please check it out."
+    assert assignment_notif["title"] == "New Task Assigned"
+    assert assignment_notif["notification_type"] == "TASK_ASSIGNED"
+    assert assignment_notif["is_read"] is False
+
+    # 4. Technician marks notification as read
+    read_res = client.patch(f"/notifications/{assignment_notif['id']}/read", headers=auth_tokens["technician"])
+    assert read_res.status_code == 200
+    assert read_res.json()["is_read"] is True
+
+    # 5. Customer cannot mark technician's notification as read
+    forbidden_read = client.patch(f"/notifications/{assignment_notif['id']}/read", headers=auth_tokens["customer"])
+    assert forbidden_read.status_code == 404
+

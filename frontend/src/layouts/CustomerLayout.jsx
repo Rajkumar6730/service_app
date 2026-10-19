@@ -21,7 +21,7 @@ const CustomerLayout = () => {
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <Link to="/" className="nav-logo" style={{ fontSize: '1.25rem' }}>
-            <Wrench size={20} />
+            <img src="/services.png" alt="ServiceHub Logo" style={{ height: '22px', width: 'auto' }} />
             <span>ServiceHub</span>
           </Link>
         </div>

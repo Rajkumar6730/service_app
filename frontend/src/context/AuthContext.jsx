@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    setLoading(true);
     setError(null);
     try {
       const data = await authService.login(email, password);
@@ -36,16 +35,16 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return userData; // return user to allow redirecting based on role
     } catch (err) {
-      const message = err.response?.data?.detail || "Login failed. Please check your credentials.";
+      const detail = err.response?.data?.detail;
+      const message = detail === "Incorrect email or password"
+        ? "Invalid email or password credentials. Please check your details and try again."
+        : (detail || "Login failed. Please check your credentials.");
       setError(message);
       throw new Error(message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const register = async (userData) => {
-    setLoading(true);
     setError(null);
     try {
       await authService.register(userData);
@@ -55,8 +54,6 @@ export const AuthProvider = ({ children }) => {
       const message = err.response?.data?.detail || "Registration failed. Please try again.";
       setError(message);
       throw new Error(message);
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -14,7 +14,7 @@ const Alert = ({ type = 'info', message, onClose }) => {
   const Icon = currentStyle.icon;
 
   return (
-    <div style={{ 
+    <div className="alert-animated" style={{ 
       display: 'flex', 
       alignItems: 'center', 
       gap: '0.75rem', 

@@ -26,6 +26,14 @@ export const managerService = {
     const response = await api.delete(`/manager/requests/${id}`);
     return response.data;
   },
+  markServiceUnavailable: async (id) => {
+    const response = await api.post(`/manager/requests/${id}/mark-unavailable`);
+    return response.data;
+  },
+  markServiceAvailable: async (id) => {
+    const response = await api.post(`/manager/requests/${id}/mark-available`);
+    return response.data;
+  },
 
   // Users & Technicians
   getCustomers: async () => {

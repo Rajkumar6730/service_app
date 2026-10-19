@@ -191,3 +191,63 @@ def delete_request(db: Session, request_id: int):
     db.delete(request)
     db.commit()
     return {"message": "Request deleted successfully"}
+
+def mark_service_unavailable(db: Session, request_id: int):
+    from fastapi import HTTPException
+    from datetime import datetime
+    from .notification_service import create_notification
+
+    request = db.query(ServiceRequest).filter(ServiceRequest.id == request_id).first()
+    if not request:
+        raise HTTPException(status_code=404, detail="Service Request not found")
+
+    # Prevent duplicate records or repeated notifications if already marked unavailable
+    if request.service_unavailable:
+        return request
+
+    request.service_unavailable = True
+    request.unavailability_message = "⚠️ Currently this service is not available."
+    request.unavailability_updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(request)
+
+    if request.customer_id:
+        create_notification(
+            db,
+            user_id=request.customer_id,
+            title="Service Unavailable",
+            message=f"Service request #{request.id} ('{request.title}'): ⚠️ Currently this service is not available."
+        )
+
+    return request
+
+def mark_service_available(db: Session, request_id: int):
+    from fastapi import HTTPException
+    from datetime import datetime
+    from .notification_service import create_notification
+
+    request = db.query(ServiceRequest).filter(ServiceRequest.id == request_id).first()
+    if not request:
+        raise HTTPException(status_code=404, detail="Service Request not found")
+
+    if not request.service_unavailable:
+        return request
+
+    request.service_unavailable = False
+    request.unavailability_message = None
+    request.unavailability_updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(request)
+
+    if request.customer_id:
+        create_notification(
+            db,
+            user_id=request.customer_id,
+            title="Service Available",
+            message=f"Service request #{request.id} ('{request.title}') is now marked as available."
+        )
+
+    return request
+

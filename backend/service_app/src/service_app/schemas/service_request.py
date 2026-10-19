@@ -58,5 +58,8 @@ class ServiceRequestResponse(ServiceRequestBase):
     status_history: List[StatusHistoryResponse] = []
     feedback: Optional[FeedbackResponse] = None
     technicians: List[AssignedTechnician] = []
+    service_unavailable: bool = False
+    unavailability_message: Optional[str] = None
+    unavailability_updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

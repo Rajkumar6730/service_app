@@ -11,7 +11,7 @@ from ..schemas.auth import Token, ForgotPasswordRequest, ResetPasswordRequest, M
 from ..core.config import settings
 from ..core.security import ALGORITHM
 from jose import jwt, JWTError
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -84,14 +84,23 @@ def get_me(current_user: User = Depends(get_current_user)):
 @router.post("/forgot-password", response_model=MessageResponse)
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email).first()
-    if user:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode = {"sub": user.email, "type": "reset", "exp": expire}
-        reset_token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
-        # Development fallback
-        print(f"DEVELOPMENT: Password reset link for {user.email}: http://localhost:5173/reset-password?token={reset_token}")
-    
-    return {"message": "If the account exists, password reset instructions have been generated."}
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No account found with this email address. Please check your email or sign up."
+        )
+
+    expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+    to_encode = {"sub": user.email, "type": "reset", "exp": expire}
+    reset_token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+    # Development fallback
+    print(f"DEVELOPMENT: Password reset link for {user.email}: http://localhost:5173/reset-password?token={reset_token}")
+
+    return {
+        "message": "Email validated successfully. You can now reset your password.",
+        "reset_token": reset_token,
+        "email": user.email
+    }
 
 @router.post("/reset-password", response_model=MessageResponse)
 def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):

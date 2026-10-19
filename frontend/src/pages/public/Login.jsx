@@ -1,35 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import Alert from '../../components/common/Alert';
 
 const Login = () => {
   const { login } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({
+    email: location.state?.email || '',
+    password: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(location.state?.message || '');
   const [isLoading, setIsLoading] = useState(false);
 
   const from = location.state?.from?.pathname || "/dashboard";
 
+  useEffect(() => {
+    if (location.state?.message) {
+      toast.info(location.state.message, 'Notice');
+    }
+  }, [location.state?.message, toast]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (error) setError('');
+    if (success) setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccess('');
 
     try {
-      await login(formData.email, formData.password);
-      navigate(from, { replace: true });
+      const user = await login(formData.email, formData.password);
+      const successMsg = user?.name 
+        ? `Welcome back, ${user.name}! Login successful.` 
+        : 'Login successful! Redirecting to dashboard...';
+      
+      setSuccess(successMsg);
+      toast.success(successMsg, 'Login Successful');
+
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 1000);
     } catch (err) {
-      setError(err.message);
-    } finally {
+      const errorMsg = err.message || 'Invalid email or password credentials. Please try again.';
+      setError(errorMsg);
+      toast.error(errorMsg, 'Login Failed');
       setIsLoading(false);
     }
   };
@@ -42,7 +68,8 @@ const Login = () => {
           <p className="text-muted mt-4 mb-2">Please enter your details to sign in.</p>
         </div>
 
-        <Alert type="error" message={error} />
+        {success && <Alert type="success" message={success} />}
+        {error && <Alert type="error" message={error} />}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -64,17 +91,28 @@ const Login = () => {
               <label className="form-label" htmlFor="password" style={{ marginBottom: 0 }}>Password</label>
               <Link to="/forgot-password" style={{ fontSize: '0.875rem', textDecoration: 'none', fontWeight: 500 }} className="text-primary">Forgot Password?</Link>
             </div>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-control"
-              placeholder="Enter your Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                className="form-control"
+                placeholder="Enter your Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <button type="submit" className="btn btn-primary btn-full mb-3" disabled={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign In'}
@@ -89,3 +127,4 @@ const Login = () => {
 };
 
 export default Login;
+

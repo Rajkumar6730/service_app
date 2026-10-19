@@ -9,6 +9,33 @@ from .routers import auth_router, service_requests_router, manager_router, techn
 # Create tables if they don't exist
 Base.metadata.create_all(bind=engine)
 
+def init_db_migrations():
+    try:
+        with engine.connect() as conn:
+            res = conn.execute(text("PRAGMA table_info(service_requests)")).fetchall()
+            existing_cols = [row[1] for row in res]
+            if existing_cols:
+                if "service_unavailable" not in existing_cols:
+                    conn.execute(text("ALTER TABLE service_requests ADD COLUMN service_unavailable BOOLEAN DEFAULT 0"))
+                if "unavailability_message" not in existing_cols:
+                    conn.execute(text("ALTER TABLE service_requests ADD COLUMN unavailability_message VARCHAR(255)"))
+                if "unavailability_updated_at" not in existing_cols:
+                    conn.execute(text("ALTER TABLE service_requests ADD COLUMN unavailability_updated_at DATETIME"))
+                conn.commit()
+
+            res_notif = conn.execute(text("PRAGMA table_info(notifications)")).fetchall()
+            existing_notif_cols = [row[1] for row in res_notif]
+            if existing_notif_cols:
+                if "request_id" not in existing_notif_cols:
+                    conn.execute(text("ALTER TABLE notifications ADD COLUMN request_id INTEGER"))
+                if "notification_type" not in existing_notif_cols:
+                    conn.execute(text("ALTER TABLE notifications ADD COLUMN notification_type VARCHAR(50) DEFAULT 'GENERAL'"))
+                conn.commit()
+    except Exception as e:
+        print(f"DB Migration Note: {e}")
+
+init_db_migrations()
+
 app = FastAPI(
     title="Service Request API",
     description="FastAPI backend with authentication and Service Requests"

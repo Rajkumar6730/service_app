@@ -114,6 +114,46 @@ const RequestDetails = () => {
     }
   };
 
+  const handleToggleUnavailable = async () => {
+    if (!request) return;
+
+    if (!request.service_unavailable) {
+      if (!window.confirm("Are you sure you want to mark this service request as unavailable? This will inform the customer.")) {
+        return;
+      }
+      setIsUpdating(true);
+      setError('');
+      setSuccessMsg('');
+      try {
+        const updated = await managerService.markServiceUnavailable(request.id);
+        setRequest(updated);
+        setSuccessMsg('Service marked as unavailable and customer informed successfully.');
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } catch (err) {
+        setError(err.response?.data?.detail || 'Failed to mark service as unavailable.');
+      } finally {
+        setIsUpdating(false);
+      }
+    } else {
+      if (!window.confirm("Do you want to restore service availability for this request?")) {
+        return;
+      }
+      setIsUpdating(true);
+      setError('');
+      setSuccessMsg('');
+      try {
+        const updated = await managerService.markServiceAvailable(request.id);
+        setRequest(updated);
+        setSuccessMsg('Service availability restored successfully.');
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } catch (err) {
+        setError(err.response?.data?.detail || 'Failed to update service availability.');
+      } finally {
+        setIsUpdating(false);
+      }
+    }
+  };
+
   if (loading) return <div className="p-4">Loading request details...</div>;
   if (error && !request) return <div className="p-4 text-danger">{error}</div>;
   if (!request) return <Navigate to="/manager/requests" replace />;
@@ -150,7 +190,24 @@ const RequestDetails = () => {
             </h1>
             <p className="text-muted">{request.title}</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <button
+              className="btn btn-outline"
+              onClick={handleToggleUnavailable}
+              disabled={isUpdating}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: request.service_unavailable ? '#059669' : '#D97706',
+                borderColor: request.service_unavailable ? '#A7F3D0' : '#FCD34D',
+                backgroundColor: request.service_unavailable ? '#ECFDF5' : '#FFFBEB',
+                fontWeight: 600
+              }}
+            >
+              <AlertCircle size={16} />
+              {request.service_unavailable ? 'Mark Service Available' : 'Mark Service Unavailable'}
+            </button>
             <button
               className="btn btn-outline"
               onClick={() => navigate(`/manager/requests/${request.id}/edit`, { state: { request } })}
@@ -169,6 +226,24 @@ const RequestDetails = () => {
           </div>
         </div>
       </div>
+
+      {request.service_unavailable && (
+        <div style={{
+          padding: '1rem',
+          marginBottom: '1.5rem',
+          backgroundColor: '#FEF3C7',
+          color: '#92400E',
+          borderRadius: '0.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          border: '1px solid #FCD34D',
+          fontWeight: 600
+        }}>
+          <AlertTriangle size={20} color="#D97706" />
+          <span>{request.unavailability_message || "⚠️ Currently this service is not available."}</span>
+        </div>
+      )}
 
       {successMsg && (
         <div style={{ padding: '1rem', marginBottom: '1.5rem', backgroundColor: '#D1FAE5', color: '#065F46', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

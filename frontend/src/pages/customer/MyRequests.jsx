@@ -162,7 +162,26 @@ const MyRequests = () => {
                   {data.items.map(req => (
                     <tr key={req.id}>
                       <td style={{ fontWeight: 600 }}>#{req.id}</td>
-                      <td>{req.title}</td>
+                      <td>
+                        <div style={{ fontWeight: 500 }}>{req.title}</div>
+                        {req.service_unavailable && (
+                          <div style={{
+                            marginTop: '0.4rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            padding: '0.25rem 0.5rem',
+                            backgroundColor: '#FEF3C7',
+                            color: '#92400E',
+                            borderRadius: '0.375rem',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            border: '1px solid #FCD34D'
+                          }}>
+                            {req.unavailability_message || "⚠️ Currently this service is not available."}
+                          </div>
+                        )}
+                      </td>
                       <td>{CATEGORY_MAP[req.category_id] || `Cat ${req.category_id}`}</td>
                       <td style={{ fontWeight: 500 }}>{req.priority}</td>
                       <td>{getStatusBadge(req.status)}</td>

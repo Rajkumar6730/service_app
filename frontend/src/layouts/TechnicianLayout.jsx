@@ -9,6 +9,7 @@ import {
   Wrench,
   Bell
 } from 'lucide-react';
+import TaskAssignmentPopup from '../components/technician/TaskAssignmentPopup';
 
 const TechnicianLayout = () => {
   const { user, logout } = useAuth();
@@ -19,7 +20,7 @@ const TechnicianLayout = () => {
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <Link to="/" className="nav-logo" style={{ fontSize: '1.25rem' }}>
-            <Wrench size={20} />
+            <img src="/services.png" alt="ServiceHub Logo" style={{ height: '22px', width: 'auto' }} />
             <span>Tech Portal</span>
           </Link>
         </div>
@@ -74,6 +75,7 @@ const TechnicianLayout = () => {
         <div className="dashboard-content">
           <Outlet />
         </div>
+        <TaskAssignmentPopup />
       </main>
     </div>
   );

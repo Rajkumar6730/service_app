@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (import.meta.env.DEV) {
+    return 'http://127.0.0.1:8000';
+  }
+  return 'https://service-request-9a97cf28.fastapicloud.dev';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://service-request-9a97cf28.fastapicloud.dev',
+  baseURL: getBaseURL(),
   // Don't set global Content-Type here because we use both JSON (register) and Form (login)
 });
 

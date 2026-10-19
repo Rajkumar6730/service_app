@@ -3,11 +3,15 @@ from sqlalchemy import desc
 from ..models.notification import Notification
 from ..models.user import User
 
-def create_notification(db: Session, user_id: int, title: str, message: str):
+from typing import Optional
+
+def create_notification(db: Session, user_id: int, title: str, message: str, request_id: Optional[int] = None, notification_type: Optional[str] = "GENERAL"):
     new_notification = Notification(
         user_id=user_id,
         title=title,
-        message=message
+        message=message,
+        request_id=request_id,
+        notification_type=notification_type
     )
     db.add(new_notification)
     db.commit()

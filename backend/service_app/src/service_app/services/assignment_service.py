@@ -85,9 +85,11 @@ def create_assignment(db: Session, assign_data: AssignmentCreate, manager_id: in
     for technician in technicians:
         create_notification(
             db,
-            technician.user_id,
-            "New Job Assigned",
-            f"You have been assigned a new work order (#{request.id}). Please review and accept it."
+            user_id=technician.user_id,
+            title="New Task Assigned",
+            message="🔔 New task assigned! Please check it out.",
+            request_id=request.id,
+            notification_type="TASK_ASSIGNED"
         )
     
     return new_assignments

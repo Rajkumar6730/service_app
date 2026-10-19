@@ -100,6 +100,20 @@ const RequestDetails = () => {
         </div>
       </div>
 
+      {request.service_unavailable && (
+        <div style={{
+          padding: '1rem',
+          marginBottom: '1.5rem',
+          backgroundColor: '#FEF3C7',
+          color: '#92400E',
+          borderRadius: '0.5rem',
+          fontWeight: 600,
+          border: '1px solid #FCD34D'
+        }}>
+          {request.unavailability_message || "⚠️ Currently this service is not available."}
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
         
         {/* Info Column */}
